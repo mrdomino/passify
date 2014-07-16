@@ -2,7 +2,7 @@ import android.Keys._
 
 android.Plugin.androidBuild
 
-name := "Passable (Android Passacre)"
+name := "Passable"
 
 scalaVersion := "2.11.1"
 
