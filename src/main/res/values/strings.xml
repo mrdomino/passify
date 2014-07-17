@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">Passable</string>
+    <string name="header_doc">Passify deterministically generates a unique site password from a master!</string>
+    <string name="master_passphrase">Master Passphrase</string>
+    <string name="username">Username</string>
+    <string name="site">Site</string>
+    <string name="passify">Passify</string>
 </resources>
