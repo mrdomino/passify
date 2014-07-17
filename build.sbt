@@ -17,6 +17,7 @@ proguardCache in Android ++= Seq(
 proguardOptions in Android ++= Seq("-dontobfuscate", "-dontoptimize", "-dontwarn scala.collection.mutable.**", "-keep class scala.collection.SeqLike { public protected *; }")
 
 libraryDependencies ++= Seq(
+                         "org.bouncycastle" % "bcprov-jdk15on" % "1.50",
                               "org.scaloid" %% "scaloid" % "3.3-8",
                             "org.scalatest" %% "scalatest" % "2.2.0" % "test")
 

@@ -3,6 +3,7 @@ package org.wholezero.passable
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
+import org.bouncycastle.crypto.digests.SHA3Digest
 import org.scaloid.common._
 import scala.language.postfixOps
 
