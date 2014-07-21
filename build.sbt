@@ -11,7 +11,8 @@ scalacOptions in Compile += "-feature"
 platformTarget in Android := "android-10"
 
 proguardCache in Android ++= Seq(
-  ProguardCache("org.scaloid") % "org.scaloid"
+  ProguardCache("org.scaloid") % "org.scaloid",
+  ProguardCache("org.bouncycastle") % "org.bouncycastle"
 )
 
 proguardOptions in Android ++= Seq("-dontobfuscate", "-dontoptimize", "-dontwarn scala.collection.mutable.**", "-keep class scala.collection.SeqLike { public protected *; }")
