@@ -1,4 +1,4 @@
-package org.wholezero.passable
+package org.wholezero.passify
 
 import java.net.IDN
 import org.bouncycastle.crypto.digests.SHA3Digest

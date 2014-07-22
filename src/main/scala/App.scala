@@ -1,4 +1,4 @@
-package org.wholezero.passable
+package org.wholezero.passify
 
 import org.scaloid.common._
 

@@ -1,4 +1,4 @@
-package org.wholezero.passable
+package org.wholezero.passify
 
 import android.app.Activity
 import android.os.Bundle
