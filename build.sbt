@@ -6,7 +6,7 @@ name := "Passable"
 
 scalaVersion := "2.11.1"
 
-scalacOptions in Compile += "-feature"
+scalacOptions in Compile ++= Seq("-feature", "-deprecation")
 
 platformTarget in Android := "android-10"
 

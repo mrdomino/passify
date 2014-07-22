@@ -3,13 +3,18 @@ package org.wholezero.passable
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
-import org.bouncycastle.crypto.digests.SHA3Digest
 import org.scaloid.common._
+import scala.language.implicitConversions
 import scala.language.postfixOps
 
 class MainActivity extends SActivity with TypedActivity {
+  implicit def editableToString(e : Editable) : String = e.toString()
   def passify(masterPass : Editable, username : Editable, site : Editable) {
-    toast(masterPass + " " + username + " " + site)
+    val username_opt : Option[String] = if (username != "") {
+      Some(username)
+    }
+    else None
+    toast(Generator.generate(username_opt, masterPass, site, 10000))
   }
   override def onCreate(bundle: Bundle) {
     super.onCreate(bundle)
