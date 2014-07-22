@@ -39,6 +39,14 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_a
 JNIEXPORT jobject JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_squeeze
   (JNIEnv *, jobject, jint);
 
+/*
+ * Class:     org_wholezero_passify_Keccak1600_KeccakSponge
+ * Method:    destroy
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_destroy
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif
