@@ -9,7 +9,7 @@ object Keccak1600 {
   System.loadLibrary("Keccak1600")
 
   private class KeccakSponge(val r : Integer) extends Sponge {
-    private var sptr : Integer = 0
+    private var sptr : Int = 0
 
     @native private def init : Unit = {}
     @native override def absorb(bs : Seq[Byte]) : Unit
