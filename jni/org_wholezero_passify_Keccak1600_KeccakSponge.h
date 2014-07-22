@@ -25,11 +25,19 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_a
 
 /*
  * Class:     org_wholezero_passify_Keccak1600_KeccakSponge
+ * Method:    absorbLastFewBits
+ * Signature: (B)V
+ */
+JNIEXPORT void JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_absorbLastFewBits
+  (JNIEnv *, jobject, jbyte);
+
+/*
+ * Class:     org_wholezero_passify_Keccak1600_KeccakSponge
  * Method:    squeeze
- * Signature: (Ljava/lang/Integer;)Lscala/collection/Seq;
+ * Signature: (I)Lscala/collection/Seq;
  */
 JNIEXPORT jobject JNICALL Java_org_wholezero_passify_Keccak1600_00024KeccakSponge_squeeze
-  (JNIEnv *, jobject, jobject);
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

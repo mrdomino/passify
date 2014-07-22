@@ -2,7 +2,8 @@ package org.wholezero.passify
 
 trait Sponge {
   def absorb(bs : Seq[Byte]) : Unit
-  def squeeze(bits : Integer) : Seq[Byte]
+  def absorbLastFewBits(b : Byte) : Unit
+  def squeeze(bytes : Int) : Seq[Byte]
 }
 
 object Keccak1600 {
@@ -13,7 +14,8 @@ object Keccak1600 {
 
     @native private def init : Unit = {}
     @native override def absorb(bs : Seq[Byte]) : Unit
-    @native override def squeeze(bits : Integer) : Seq[Byte]
+    @native override def absorbLastFewBits(b : Byte) : Unit
+    @native override def squeeze(bytes : Int) : Seq[Byte]
 
     init
   }
