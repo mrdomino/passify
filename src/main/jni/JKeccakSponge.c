@@ -123,13 +123,3 @@ JNIEXPORT jbyteArray JNICALL Java_org_wholezero_passify_KeccakSponge_00024Keccak
   (*e)->ReleaseByteArrayElements(e, ret, es, 0);
   return ret;
 }
-
-/*
- * Class:     org_wholezero_passify_KeccakSponge_KeccakSpongeNative
- * Method:    dispose
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_dispose
-  (JNIEnv *e, jobject s)
-{
-}

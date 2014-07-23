@@ -4,7 +4,7 @@ import java.nio.*;
 
 public class KeccakSponge {
   static {
-    System.loadLibrary("KeccakSpongeJ");
+    System.loadLibrary("JKeccakSponge");
   }
 
   public static interface Sponge {
