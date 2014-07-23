@@ -1,24 +1,32 @@
 package org.wholezero.passify;
 
+import java.nio.*;
+
 public class KeccakSponge {
+  static {
+    System.loadLibrary("KeccakSpongeJ");
+  }
+
   public static interface Sponge {
     public void absorb(byte[] bs);
     public void absorbLastFewBits(byte b);
     public byte[] squeeze(int bytes);
-    public void dispose();
   }
 
   private static class KeccakSpongeNative implements Sponge {
-    private long sptr;
-    private int  rate;
+    private ByteBuffer state;
+    private int rate;
+
+    native private static int sizeofSpongeInstance();
+
     public KeccakSpongeNative(int r) {
+      state = ByteBuffer.allocateDirect(sizeofSpongeInstance());
       rate = r;
     }
     native public void init();
     native public void absorb(byte[] bs);
     native public void absorbLastFewBits(byte b);
     native public byte[] squeeze(int bytes);
-    native public void dispose();
   }
 
   public static Sponge build(int r) {
