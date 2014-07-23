@@ -4,6 +4,19 @@
 #include "KeccakSponge.h"
 #include "org_wholezero_passify_KeccakSponge_KeccakSpongeNative.h"
 
+static Keccak_SpongeInstance*
+_get_instance(JNIEnv *e, jobject s)
+{
+  jclass   class;
+  jfieldID fid;
+  jobject  state;
+
+  class = (*e)->GetObjectClass(e, s);
+  fid = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
+  state = (*e)->GetObjectField(e, s, fid);
+  return (*e)->GetDirectBufferAddress(e, state);
+}
+
 /*
  * Class:     org_wholezero_passify_KeccakSponge_KeccakSpongeNative
  * Method:    sizeofSpongeInstance
@@ -26,7 +39,6 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
   jclass                 class;
   jfieldID               fid;
   jint                   rate;
-  jobject                state;
   Keccak_SpongeInstance* si;
 
   class = (*e)->GetObjectClass(e, s);
@@ -35,9 +47,7 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
   rate = (*e)->GetIntField(e, s, fid);
   assert(rate <= 1600);
 
-  fid = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
-  state = (*e)->GetObjectField(e, s, fid);
-  si = (Keccak_SpongeInstance*)(*e)->GetDirectBufferAddress(e, state);
+  si = _get_instance(e, s);
 
   if (0 != Keccak_SpongeInitialize(si, rate, 1600 - rate)) {
     /* TODO throw */
@@ -53,6 +63,20 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
 JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_absorb
   (JNIEnv *e, jobject s, jbyteArray bs)
 {
+  Keccak_SpongeInstance* si;
+  jbyte*                 es;
+  jint                   n;
+
+  si = _get_instance(e, s);
+  n = (*e)->GetArrayLength(e, bs);
+  es = (*e)->GetByteArrayElements(e, bs, 0);
+
+  if (0 != Keccak_SpongeAbsorb(si, (unsigned char*)es, n)) {
+    /* TODO throw */
+    assert(!"sponge-absorb");
+  }
+
+  (*e)->ReleaseByteArrayElements(e, bs, es, JNI_ABORT);
 }
 
 /*
@@ -63,6 +87,13 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
 JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_absorbLastFewBits
   (JNIEnv *e, jobject s, jbyte b)
 {
+  Keccak_SpongeInstance* si;
+
+  si = _get_instance(e, s);
+  if (0 != Keccak_SpongeAbsorbLastFewBits(si, b)) {
+    /* TODO throw */
+    assert(!"sponge-absorblastfewbits");
+  }
 }
 
 /*
@@ -73,7 +104,24 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
 JNIEXPORT jbyteArray JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_squeeze
   (JNIEnv *e, jobject s, jint n)
 {
-  return 0;
+  Keccak_SpongeInstance* si;
+  jbyteArray             ret;
+  jbyte*                 es;
+
+  si = _get_instance(e, s);
+  ret = (*e)->NewByteArray(e, n);
+  /* TODO throw */
+  assert(ret);
+
+  es = (*e)->GetByteArrayElements(e, ret, 0);
+
+  if (0 != Keccak_SpongeSqueeze(si, (unsigned char*)es, n)) {
+    /* TODO throw */
+    assert(!"sponge-squeeze");
+  }
+
+  (*e)->ReleaseByteArrayElements(e, ret, es, 0);
+  return ret;
 }
 
 /*
