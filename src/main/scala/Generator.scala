@@ -16,9 +16,10 @@ object Generator {
       case Some(s) => s ++ ":"
       case None    => ""
     }) ++ password ++ ":" ++ IDN.toASCII(site)).getBytes()
-    sponge.absorb(prefix)
-    for (_ <- 0 until iterations)
-      sponge.absorb(some_nulls)
+    val seed = prefix ++ (0 until iterations) flatMap {_ => some_nulls}
+    val end1 = System.currentTimeMillis()
+    info(f"generate(1): ${end1 - start}%dms")
+    sponge.absorb(seed)
     val end = System.currentTimeMillis()
     info(f"generate: ${end - start}%dms")
     Hex.valueOf(sponge.squeeze(64))
