@@ -1,0 +1,4 @@
+#!/bin/sh
+# XXX for some reason android:ndkBuild doesn't set this properly?
+export NDK_PROJECT_PATH=$(cd $(dirname "$0") && echo $PWD)/src/main
+sbt

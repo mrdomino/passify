@@ -1,5 +1,5 @@
 package org.wholezero.passify
 
 object Hex {
-  def valueOf(buf : Array[Byte]) : String = buf.map("%02x" format _).mkString
+  def valueOf(buf : Seq[Byte]) : String = buf.map("%02x" format _).mkString
 }
