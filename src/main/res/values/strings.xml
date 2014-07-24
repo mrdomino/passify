@@ -1,5 +1,5 @@
 <resources>
-    <string name="header_doc">Passify deterministically generates a unique site password from a master!</string>
+    <string name="header_doc">Passify deterministically generates a unique site password from a master passphrase!</string>
     <string name="master_passphrase">Master Passphrase</string>
     <string name="username">Username</string>
     <string name="site">Site</string>
