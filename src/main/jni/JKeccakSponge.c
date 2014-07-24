@@ -7,21 +7,20 @@
 #include "org_wholezero_passify_KeccakSponge_KeccakSpongeNative.h"
 
 static const char* TAG = "Passify";
+static jfieldID    g_state;
+static jfieldID    g_rate;
 
-#define VLOG(fmt, ...) \
-  __android_log_print(ANDROID_LOG_VERBOSE, TAG, fmt, __VA_ARGS__)
+#define LOGV(...) \
+  __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
+#define LOGD(...) \
+  __android_log_print(ANDROID_LOG_DEBUG, TAG, __VA_ARGS__)
+#define LOGE(...) \
+  __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
 
-static Keccak_SpongeInstance*
+__inline__ static Keccak_SpongeInstance*
 _get_instance(JNIEnv *e, jobject s)
 {
-  jclass   class;
-  jfieldID fid;
-  jobject  state;
-
-  class = (*e)->GetObjectClass(e, s);
-  fid = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
-  state = (*e)->GetObjectField(e, s, fid);
-  return (*e)->GetDirectBufferAddress(e, state);
+  return (*e)->GetDirectBufferAddress(e, (*e)->GetObjectField(e, s, g_state));
 }
 
 static int64_t
@@ -33,6 +32,25 @@ _get_time_nsec()
     return ts.tv_sec * 1000000000LL + ts.tv_nsec;
   }
   else return -1;
+}
+
+jint JNI_OnLoad
+  (JavaVM *vm, void *reserved)
+{
+  JNIEnv *e;
+  jclass  class;
+
+  if ((*vm)->GetEnv(vm, (void**)&e, JNI_VERSION_1_6) != JNI_OK) {
+    LOGE("%s failed", __func__);
+    return -1;
+  }
+
+  class = (*e)->FindClass(e,
+      "org/wholezero/passify/KeccakSponge$KeccakSpongeNative");
+  g_state = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
+  g_rate = (*e)->GetFieldID(e, class, "rate", "I");
+
+  return JNI_VERSION_1_6;
 }
 
 /*
@@ -54,15 +72,10 @@ JNIEXPORT jint JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
 JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_init
   (JNIEnv *e, jobject s)
 {
-  jclass                 class;
-  jfieldID               fid;
   jint                   rate;
   Keccak_SpongeInstance* si;
 
-  class = (*e)->GetObjectClass(e, s);
-
-  fid = (*e)->GetFieldID(e, class, "rate", "I");
-  rate = (*e)->GetIntField(e, s, fid);
+  rate = (*e)->GetIntField(e, s, g_rate);
   assert(rate <= 1600);
 
   si = _get_instance(e, s);
@@ -86,27 +99,23 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
   jsize                  n;
   int64_t                start, end;
 
-  start = _get_time_nsec();
-
   si = _get_instance(e, s);
   n = (*e)->GetArrayLength(e, bs);
-  VLOG("absorb:start %u", n);
   es = (*e)->GetByteArrayElements(e, bs, 0);
-  end = _get_time_nsec();
-  VLOG("absorb:copied %lldms", (end - start) / 1000000LL);
 
+  start = _get_time_nsec();
   if (0 != Keccak_SpongeAbsorb(si, (unsigned char*)es, n)) {
     /* TODO throw */
+    LOGE("Keccak_SpongeAbsorb failed");
     assert(!"sponge-absorb");
   }
-  start = end;
   end = _get_time_nsec();
-  VLOG("absorb:absorbed %lldms", (end - start) / 1000000LL);
+  if (end - start > 5000000LL) {
+    LOGD("absorb:absorbed %u bytes in %lldms",
+         n, (end - start) / 1000000LL);
+  }
 
-  (*e)->ReleaseByteArrayElements(e, bs, es, JNI_ABORT);
-  start = end;
-  end = _get_time_nsec();
-  VLOG("absorb:released %lldms", (end - start) / 1000000LL);
+  (*e)->ReleaseByteArrayElements(e, bs, es, 0);
 }
 
 /*
@@ -122,6 +131,7 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
   si = _get_instance(e, s);
   if (0 != Keccak_SpongeAbsorbLastFewBits(si, b)) {
     /* TODO throw */
+    LOGE("Keccak_SpongeAbsorbLastFewBits failed");
     assert(!"sponge-absorblastfewbits");
   }
 }
@@ -141,12 +151,16 @@ JNIEXPORT jbyteArray JNICALL Java_org_wholezero_passify_KeccakSponge_00024Keccak
   si = _get_instance(e, s);
   ret = (*e)->NewByteArray(e, n);
   /* TODO throw */
-  assert(ret);
+  if (!ret) {
+    LOGE("Got NULL from NewByteArray");
+    assert(!"null-ret");
+  }
 
   es = (*e)->GetByteArrayElements(e, ret, 0);
 
   if (0 != Keccak_SpongeSqueeze(si, (unsigned char*)es, n)) {
     /* TODO throw */
+    LOGE("Keccak_SpongeSqueeze failed");
     assert(!"sponge-squeeze");
   }
 
