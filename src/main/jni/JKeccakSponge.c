@@ -1,8 +1,15 @@
 #include <assert.h>
 #include <stdlib.h>
+#include <time.h>
+#include <android/log.h>
 
 #include "KeccakSponge.h"
 #include "org_wholezero_passify_KeccakSponge_KeccakSpongeNative.h"
+
+static const char* TAG = "Passify";
+
+#define VLOG(fmt, ...) \
+  __android_log_print(ANDROID_LOG_VERBOSE, TAG, fmt, __VA_ARGS__)
 
 static Keccak_SpongeInstance*
 _get_instance(JNIEnv *e, jobject s)
@@ -15,6 +22,17 @@ _get_instance(JNIEnv *e, jobject s)
   fid = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
   state = (*e)->GetObjectField(e, s, fid);
   return (*e)->GetDirectBufferAddress(e, state);
+}
+
+static int64_t
+_get_time_nsec()
+{
+  struct timespec ts;
+
+  if (0 == clock_gettime(CLOCK_MONOTONIC, &ts)) {
+    return ts.tv_sec * 1000000000LL + ts.tv_nsec;
+  }
+  else return -1;
 }
 
 /*
@@ -65,18 +83,30 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
 {
   Keccak_SpongeInstance* si;
   jbyte*                 es;
-  jint                   n;
+  jsize                  n;
+  int64_t                start, end;
+
+  start = _get_time_nsec();
 
   si = _get_instance(e, s);
   n = (*e)->GetArrayLength(e, bs);
+  VLOG("absorb:start %u", n);
   es = (*e)->GetByteArrayElements(e, bs, 0);
+  end = _get_time_nsec();
+  VLOG("absorb:copied %lldms", (end - start) / 1000000LL);
 
   if (0 != Keccak_SpongeAbsorb(si, (unsigned char*)es, n)) {
     /* TODO throw */
     assert(!"sponge-absorb");
   }
+  start = end;
+  end = _get_time_nsec();
+  VLOG("absorb:absorbed %lldms", (end - start) / 1000000LL);
 
   (*e)->ReleaseByteArrayElements(e, bs, es, JNI_ABORT);
+  start = end;
+  end = _get_time_nsec();
+  VLOG("absorb:released %lldms", (end - start) / 1000000LL);
 }
 
 /*

@@ -6,6 +6,7 @@ LOCAL_MODULE := JKeccakSponge
 LOCAL_CFLAGS := -Wall -Werror -I$(SBT_SOURCE_MANAGED)
 LOCAL_SRC_FILES := JKeccakSponge.c KeccakSponge.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/common
+LOCAL_LDLIBS := -llog
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_ARM_MODE := arm
 	LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/armv7a
