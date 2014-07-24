@@ -12,11 +12,11 @@ object Generator {
                site : String, iterations : Int) : String = {
     val start = System.currentTimeMillis()
     var sponge = KeccakSponge.build(64)
-    val prefix = ((username match {
+    val prefix = (username match {
       case Some(s) => s ++ ":"
       case None    => ""
-    }) ++ password ++ ":" ++ IDN.toASCII(site)).getBytes()
-    sponge absorb prefix
+    }) ++ password ++ ":" ++ IDN.toASCII(site)
+    sponge absorb prefix.getBytes()
     for (_ <- 0 until iterations) sponge absorb some_nulls
     val end = System.currentTimeMillis()
     info(f"generate: ${end - start}%dms")
