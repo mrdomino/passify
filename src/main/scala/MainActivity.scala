@@ -1,11 +1,13 @@
 package org.wholezero.passify
 
 import java.util.List
+import java.util.concurrent.{LinkedBlockingQueue,ThreadPoolExecutor,TimeUnit}
 import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.widget.{ArrayAdapter,ListView}
 import org.scaloid.common._
+import scala.concurrent.{Future,ExecutionContext}
 import scala.language.implicitConversions
 import scala.language.postfixOps
 
@@ -15,6 +17,9 @@ sealed case class Pass(username : Option[String], site : String, pass : String)
 }
 
 class MainActivity extends SActivity with TypedActivity {
+  implicit val exec = ExecutionContext.fromExecutor(
+      new ThreadPoolExecutor(1, 10, 1000, TimeUnit.SECONDS,
+          new LinkedBlockingQueue[Runnable]))
   override implicit val loggerTag = App.loggerTag
 
   implicit def editableToString(e : Editable) : String = e.toString()
@@ -24,10 +29,20 @@ class MainActivity extends SActivity with TypedActivity {
       Some(username)
     }
     else None
-    addPass(Pass(username_opt, site,
-                 Generator.generate(username_opt, masterPass, site, 10000)))
+    passifyButton setText R.string.passifying
+    passifyButton setEnabled false
+    Future {
+      val pass = Generator.generate(username_opt, masterPass, site, 10000)
+      runOnUiThread {
+        addPass(Pass(username_opt, site, pass))
+        toast(R.string.generated)
+        passifyButton setText R.string.passify
+        passifyButton setEnabled true
+      }
+    }
   }
 
+  private lazy val passifyButton = new SButton(R.string.passify)
   private lazy val passesAdapter = new ArrayAdapter(ctx, android.R.layout.simple_list_item_1, passes)
   private val passes : List[Pass] = new java.util.ArrayList()
   private def addPass(p : Pass) { passesAdapter.insert(p, 0) }
@@ -43,7 +58,8 @@ class MainActivity extends SActivity with TypedActivity {
       val username = SEditText() singleLine true
       STextView(R.string.site)
       val site = SEditText() singleLine true
-      SButton(R.string.passify, passify(masterPass.text, username.text, site.text))
+      this += passifyButton
+      passifyButton onClick passify(masterPass.text, username.text, site.text)
 
       SListView() setAdapter passesAdapter
 
