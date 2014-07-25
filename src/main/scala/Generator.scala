@@ -20,6 +20,6 @@ object Generator {
     for (_ <- 0 until iterations) sponge absorb some_nulls
     val end = System.currentTimeMillis()
     info(f"generate: ${end - start}%dms")
-    Hex.valueOf(sponge.squeeze(64))
+    Hex.valueOf(sponge.squeeze(16))
   }
 }
