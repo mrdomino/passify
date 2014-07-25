@@ -18,7 +18,7 @@ sealed case class Pass(username : Option[String], site : String, pass : String)
 
 class MainActivity extends SActivity with TypedActivity {
   implicit val exec = ExecutionContext.fromExecutor(
-      new ThreadPoolExecutor(1, 10, 1000, TimeUnit.SECONDS,
+      new ThreadPoolExecutor(1, 1, 0, TimeUnit.SECONDS,
           new LinkedBlockingQueue[Runnable]))
   override implicit val loggerTag = App.loggerTag
 
