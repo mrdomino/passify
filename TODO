@@ -1,0 +1,22 @@
+- P1 press or long press => copy pass to clipboard
+- P3 use simple_list_item_2 with custom array adapter
+- P2 cache passphrases better
+- P3 hide cached passwords by default, push to show
+- P2 swipe to remove passphrases
+- P4 pin unlock
+- P3 optionally store cached passphrases / master passphrase on disk securely
+
+- P1 Keccak in separate thread
+
+- P2 multibase encoding / password schemas
+- P3 passacre config support
+- P3 optionally confirm master phrase on config miss
+
+- P2 more compact UI / only display help text once
+
+- P3 optionally use the armv7a-neon code when available
+- P5 maybe use armv6 code on armeabi
+
+- P4 branch off native keccak into separate project
+
+- P5 skein support
