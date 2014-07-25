@@ -40,7 +40,7 @@ jint JNI_OnLoad
   JNIEnv *e;
   jclass  class;
 
-  if ((*vm)->GetEnv(vm, (void**)&e, JNI_VERSION_1_6) != JNI_OK) {
+  if ((*vm)->GetEnv(vm, (void**)&e, JNI_VERSION_1_4) != JNI_OK) {
     LOGE("%s failed", __func__);
     return -1;
   }
@@ -50,7 +50,7 @@ jint JNI_OnLoad
   g_state = (*e)->GetFieldID(e, class, "state", "Ljava/nio/ByteBuffer;");
   g_rate = (*e)->GetFieldID(e, class, "rate", "I");
 
-  return JNI_VERSION_1_6;
+  return JNI_VERSION_1_4;
 }
 
 /*
