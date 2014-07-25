@@ -6,8 +6,6 @@
 - P4 pin unlock
 - P3 optionally store cached passphrases / master passphrase on disk securely
 
-- P1 Keccak in separate thread
-
 - P2 multibase encoding / password schemas
 - P3 passacre config support
 - P3 optionally confirm master phrase on config miss
