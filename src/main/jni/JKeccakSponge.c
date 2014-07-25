@@ -81,6 +81,7 @@ JNIEXPORT void JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSponge
   si = _get_instance(e, s);
 
   if (0 != Keccak_SpongeInitialize(si, rate, 1600 - rate)) {
+    LOGE("Keccak_SpongeInitialize failed");
     /* TODO throw */
     assert(!"sponge-init");
   }
