@@ -1,4 +1,5 @@
 - P1 press or long press => copy pass to clipboard
+- P4 show a spinner or progress bar
 - P3 use simple_list_item_2 with custom array adapter
 - P2 cache passphrases better
 - P3 hide cached passwords by default, push to show
