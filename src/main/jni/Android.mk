@@ -6,6 +6,7 @@ LOCAL_MODULE := JKeccakSponge
 LOCAL_CFLAGS := -Wall -Werror -I$(SBT_SOURCE_MANAGED)
 LOCAL_SRC_FILES := JKeccakSponge.c KeccakSponge.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/common
+LOCAL_STATIC_LIBRARIES := cpufeatures
 LOCAL_LDLIBS := -llog
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_ARM_MODE := arm
@@ -19,3 +20,5 @@ else
 endif
 
 include $(BUILD_SHARED_LIBRARY)
+
+$(call import-module,android/cpufeatures)
