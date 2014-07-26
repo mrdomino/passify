@@ -10,6 +10,11 @@ static const char* TAG = "Passify";
 static jfieldID    g_state;
 static jfieldID    g_rate;
 
+
+// Must have 64-byte-aligned memory for Neon. Just grab the extra bytes anyway
+// to skip the feature check.
+#define NEON_ALIGN 64
+
 #define LOGV(...) \
   __android_log_print(ANDROID_LOG_VERBOSE, TAG, __VA_ARGS__)
 #define LOGD(...) \
@@ -20,7 +25,10 @@ static jfieldID    g_rate;
 __inline__ static Keccak_SpongeInstance*
 _get_instance(JNIEnv *e, jobject s)
 {
-  return (*e)->GetDirectBufferAddress(e, (*e)->GetObjectField(e, s, g_state));
+  char *p = (*e)->GetDirectBufferAddress(
+      e, (*e)->GetObjectField(e, s, g_state));
+
+  return (Keccak_SpongeInstance*)((int)(p + NEON_ALIGN) & ~(NEON_ALIGN - 1));
 }
 
 static int64_t
@@ -61,7 +69,7 @@ jint JNI_OnLoad
 JNIEXPORT jint JNICALL Java_org_wholezero_passify_KeccakSponge_00024KeccakSpongeNative_sizeofSpongeInstance
   (JNIEnv *e, jclass _unused)
 {
-  return sizeof(Keccak_SpongeInstance);
+  return sizeof(Keccak_SpongeInstance) + NEON_ALIGN - 1;
 }
 
 /*
