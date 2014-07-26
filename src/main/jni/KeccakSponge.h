@@ -19,17 +19,24 @@ http://creativecommons.org/publicdomain/zero/1.0/
 #include "SnP-interface.h"
 #include <string.h>
 
+// N.B.(mrdomino): we assure alignment in JKeccakSponge.c.
+#if 0
 // on Mac OS-X and possibly others, ALIGN(x) is defined in param.h, and -Werror chokes on the redef.
-#ifdef ALIGN
-#undef ALIGN
-#endif
+#  ifdef ALIGN
+#  undef ALIGN
+#  endif
 
-#if defined(__GNUC__)
-#define ALIGN __attribute__ ((aligned(32)))
-#elif defined(_MSC_VER)
-#define ALIGN __declspec(align(32))
+#  if defined(__GNUC__)
+#  define ALIGN __attribute__ ((aligned(32)))
+#  elif defined(_MSC_VER)
+#  define ALIGN __declspec(align(32))
+#  else
+#  define ALIGN
+#  endif
 #else
-#define ALIGN
+#  ifndef ALIGN
+#  define ALIGN
+#  endif
 #endif
 
 /**
