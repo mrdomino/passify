@@ -11,8 +11,8 @@ static jfieldID    g_state;
 static jfieldID    g_rate;
 
 
-// Must have 64-byte-aligned memory for Neon. Just grab the extra bytes anyway
-// to skip the feature check.
+// The Neon asm requires 32-byte alignment and recommends 64-byte (cache)
+// alignment.
 #define NEON_ALIGN 64
 
 #define LOGV(...) \
