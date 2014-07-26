@@ -22,7 +22,7 @@ static jfieldID    g_rate;
 #define LOGE(...) \
   __android_log_print(ANDROID_LOG_ERROR, TAG, __VA_ARGS__)
 
-__inline__ static Keccak_SpongeInstance*
+inline static Keccak_SpongeInstance*
 _get_instance(JNIEnv *e, jobject s)
 {
   char *p = (*e)->GetDirectBufferAddress(
@@ -31,7 +31,7 @@ _get_instance(JNIEnv *e, jobject s)
   return (Keccak_SpongeInstance*)((int)(p + NEON_ALIGN) & ~(NEON_ALIGN - 1));
 }
 
-static int64_t
+inline static int64_t
 _get_time_nsec()
 {
   struct timespec ts;
