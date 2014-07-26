@@ -9,8 +9,9 @@ LOCAL_C_INCLUDES := $(LOCAL_PATH)/common
 LOCAL_LDLIBS := -llog
 ifeq ($(TARGET_ARCH_ABI),armeabi-v7a)
 	LOCAL_ARM_MODE := arm
-	LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/armv7a
-	LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) armv7a/KeccakF-1600-inplace-32bi-armv7a-le-gcc.S
+	LOCAL_ARM_NEON := true
+	LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/armv7a-neon
+	LOCAL_SRC_FILES := $(LOCAL_SRC_FILES) armv7a-neon/KeccakF-1600-armv7a-le-neon-gcc.S
 else
 	LOCAL_CFLAGS := $(LOCAL_CFLAGS) -Wno-strict-aliasing
 	LOCAL_C_INCLUDES := $(LOCAL_C_INCLUDES) $(LOCAL_PATH)/32bi
