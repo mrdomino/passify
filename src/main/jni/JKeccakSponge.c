@@ -28,7 +28,8 @@ _get_instance(JNIEnv *e, jobject s)
   char *p = (*e)->GetDirectBufferAddress(
       e, (*e)->GetObjectField(e, s, g_state));
 
-  return (Keccak_SpongeInstance*)((int)(p + NEON_ALIGN) & ~(NEON_ALIGN - 1));
+  return
+    (Keccak_SpongeInstance*)((int)(p + NEON_ALIGN - 1) & ~(NEON_ALIGN - 1));
 }
 
 inline static int64_t
